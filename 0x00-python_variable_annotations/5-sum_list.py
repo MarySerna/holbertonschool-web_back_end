@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-""" 
-List of floats 
+"""
+List of floats
 """
 
 from typing import Callable, Iterator, Union, Optional, List
