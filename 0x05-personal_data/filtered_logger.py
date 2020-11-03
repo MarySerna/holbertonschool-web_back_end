@@ -97,5 +97,7 @@ def main():
         formatter.format(log_record)
     cursor.close()
     db.close()
+
+
 if __name__ == "__main__":
     main()
