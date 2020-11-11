@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
-"""manage the API authentication"""
-from flask import request
-from typing import List, TypeVar
+"""
+Manage the API authentication
+"""
 from api.v1.auth.auth import Auth
+from base64 import b64decode
 from models.user import User
-import base64
+from typing import TypeVar
 
 
 class BasicAuth(Auth):
-    """BasicAuth Class"""
+    """
+    Basic Authentication Class
+    """
     def extract_base64_authorization_header(self,
                                             authorization_header: str
                                             ) -> str:
-        """returns the Base64 part of the Authorization header"""
+        """
+        Returns the Base64 part of the Authorization header
+        """
         if authorization_header is None or\
            type(authorization_header) is not str:
             return None
@@ -23,7 +28,9 @@ class BasicAuth(Auth):
     def decode_base64_authorization_header(self,
                                            base64_authorization_header: str
                                            ) -> str:
-        """returns the decoded value of a Base64 string"""
+        """
+        Returns the decoded value of a Base64 string
+        """
         if base64_authorization_header is None or\
            type(base64_authorization_header) is not str:
             return None
@@ -38,7 +45,9 @@ class BasicAuth(Auth):
     def extract_user_credentials(self,
                                  decoded_base64_authorization_header: str
                                  ) -> (str, str):
-        """returns the user email and password from the Base64 decoded value"""
+        """
+        Returns the user email and password from the Base64 decoded value
+        """
         if not decoded_base64_authorization_header or\
            not isinstance(decoded_base64_authorization_header, str)\
            or ":" not in decoded_base64_authorization_header:
@@ -48,7 +57,9 @@ class BasicAuth(Auth):
 
     def user_object_from_credentials(self, user_email: str,
                                      user_pwd: str) -> TypeVar('User'):
-        """returns the User instance based on his email and password"""
+        """
+        Returns the User instance based on his email and password
+        """
         if not user_email or not isinstance(user_email, str)\
            or not user_pwd or not isinstance(user_pwd, str):
             return None
@@ -61,8 +72,9 @@ class BasicAuth(Auth):
         return None
 
     def current_user(self, request=None) -> TypeVar('User'):
-        """ overloads Auth and
-            retrieves the User instance for a request
+        """
+        Overloads Auth and
+        retrieves the User instance for a request
         """
         try:
             header = self.authorization_header(request)
