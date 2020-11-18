@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
-Database
+Database module
 """
-
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -62,9 +61,9 @@ class DB:
         Update the user’s attributes as passed in the method’s arguments
         then commit changes to the database
         """
-        upuser = self.find_user_by(id=user_id)
+        u = self.find_user_by(id=user_id)
         for key, val in kwargs.items():
-            if not hasattr(upuser, key):
+            if not hasattr(u, key):
                 raise ValueError
-            setattr(upuser, key, val)
+            setattr(u, key, val)
         self._session.commit()
