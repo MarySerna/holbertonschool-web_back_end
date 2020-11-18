@@ -12,14 +12,17 @@ AUTH = Auth()
 
 @app.route('/', methods=['GET'], strict_slashes=False)
 def hello() -> str:
-    """welcome msg"""
+    """
+    Welcome msg
+    """
     return jsonify({"message": "Bienvenue"})
 
 
 @app.route('/users', methods=['POST'], strict_slashes=False)
 def users() -> str:
-    """ Registering the user
-        Return: message, HTTP code
+    """
+    Registering the user
+    Return: message, HTTP code
     """
     email = request.form.get('email')
     # print(email)
@@ -34,7 +37,9 @@ def users() -> str:
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
 def login():
-    """respond to the POST /sessions route"""
+    """
+    Respond to the POST /sessions route
+    """
     email = request.form.get('email')
     password = request.form.get('password')
     if not AUTH.valid_login(email, password):
@@ -47,7 +52,9 @@ def login():
 
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
 def logout():
-    """response to the DELETE /sessions route"""
+    """
+    Response to the DELETE /sessions route
+    """
     session_id = request.cookies.get('session_id')
     user = AUTH.get_user_from_session_id(session_id)
     if not user:
@@ -58,7 +65,9 @@ def logout():
 
 @app.route('/profile', methods=['GET'], strict_slashes=False)
 def profile() -> str:
-    """response to the DELETE /sessions route"""
+    """
+    Response to the DELETE /sessions route
+    """
     session_id = request.cookies.get('session_id')
     user = AUTH.get_user_from_session_id(session_id)
     if user:
@@ -69,7 +78,9 @@ def profile() -> str:
 
 @app.route('/reset_password', methods=['POST'], strict_slashes=False)
 def get_reset_password_token() -> str:
-    """generate a token and respond with a 200 HTTP status"""
+    """
+    Generate a token and respond with a 200 HTTP status
+    """
     email = request.form.get('email')
     reset_token = AUTH.get_reset_password_token(email)
     if not reset_token:
@@ -80,7 +91,9 @@ def get_reset_password_token() -> str:
 
 @app.route('/reset_password', methods=['PUT'], strict_slashes=False)
 def update_password() -> str:
-    """Update the password"""
+    """
+    Update the password
+    """
     email = request.form.get('email')
     reset_token = request.form.get('reset_token')
     new_password = request.form.get('new_password')
