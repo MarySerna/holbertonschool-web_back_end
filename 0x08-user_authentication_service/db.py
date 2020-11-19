@@ -8,7 +8,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm import sessionmaker
 from typing import TypeVar
-
 from user import Base
 from user import User
 
