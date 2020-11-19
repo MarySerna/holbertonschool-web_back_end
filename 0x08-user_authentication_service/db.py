@@ -1,30 +1,24 @@
 #!/usr/bin/env python3
+
 """
-Database module
+Database class to save and update databse
 """
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm import sessionmaker
-from typing import TypeVar
-from user import Base
-from user import User
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
+from user import Base, User
 
 
 class DB:
-    """
-    Database class
-    Creates engine, session, adds user object to DB
-    Methods:
-        add_user - save the user object to the database
-        find_user_by - returns the first row found in the users table
-    """
+
     def __init__(self):
         """
-        Constructor
+        Initializes class attributes
         """
-        self._engine = create_engine("sqlite:///a.db")
+        self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
@@ -32,37 +26,58 @@ class DB:
     @property
     def _session(self):
         """
-        Create session
+        Private method that returns a session
         """
         if self.__session is None:
             DBSession = sessionmaker(bind=self._engine)
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email: str, hashed_password: str) -> TypeVar('User'):
-        """
-        Add a user instance to the session DB
+    def add_user(self, email: str, hashed_password: str) -> User:
+        """ Save new the user to the database
         """
         user = User(email=email, hashed_password=hashed_password)
         self._session.add(user)
         self._session.commit()
         return user
 
-    def find_user_by(self, **kwargs: dict) -> object:
+    def find_user_by(self, **kwargs) -> User:
         """
-        Returns the first row found in the users table
-        as filtered by the method’s input arguments
+        Returns the first row found in users table
+        as filtered by the method's input argument
         """
-        return self._session.query(User).filter_by(**kwargs).first()
+        user_keys = [
+            'id',
+            'email',
+            'hashed_password',
+            'session_id',
+            'reset_token']
 
-    def update_user(self, user_id: int, **kwargs: dict) -> None:
+        for key in kwargs.keys():
+            if key not in user_keys:
+                raise InvalidRequestError
+        result = self._session.query(User).filter_by(**kwargs).first()
+        if result is None:
+            raise NoResultFound
+        return result
+
+    def update_user(self, user_id: int, **kwargs) -> None:
         """
-        Update the user’s attributes as passed in the method’s arguments
-        then commit changes to the database
+        Update user attribute and
+        commits changes to the database
         """
-        u = self.find_user_by(id=user_id)
-        for key, val in kwargs.items():
-            if not hasattr(u, key):
+        user_to_update = self.find_user_by(id=user_id)
+
+        user_keys = [
+            'id',
+            'email',
+            'hashed_password',
+            'session_id',
+            'reset_token']
+
+        for key, value in kwargs.items():
+            if key in user_keys:
+                setattr(user_to_update, key, value)
+            else:
                 raise ValueError
-            setattr(u, key, val)
         self._session.commit()
