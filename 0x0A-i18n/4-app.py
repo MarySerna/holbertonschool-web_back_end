@@ -1,50 +1,45 @@
 #!/usr/bin/env python3
 """
-Route module for the API
+Module for trying out Babel i18n
 """
-from flask import Flask, render_template, request
-from os import getenv
-from flask_babel import Babel, gettext
+from flask_babel import Babel, _
+from flask import Flask, render_template, request, flash
+
+app = Flask(__name__, template_folder='templates')
+babel = Babel(app)
 
 
-app = Flask(__name__)
-
-
-class Config:
+class Config(object):
     """
-    Class config
+    Configuration Class for Babel
     """
+
     LANGUAGES = ['en', 'fr']
     BABEL_DEFAULT_LOCALE = 'en'
     BABEL_DEFAULT_TIMEZONE = 'UTC'
 
 
 app.config.from_object(Config)
-babel = Babel(app)
+
+
+@app.route('/', methods=['GET'], strict_slashes=False)
+def hello_world() -> str:
+    """
+    Renders a Basic Template for Babel Implementation
+    """
+    return render_template("4-index.html")
 
 
 @babel.localeselector
-def get_locale():
+def get_locale() -> str:
     """
-    Best match locale lang
+    Select a language translation to use for that request
     """
-    local_lang = request.args.get('locale')
-    support_lang = app.config['LANGUAGES']
-    if local_lang in support_lang:
-        return local_lang
-    else:
-        return request.accept_languages.best_match(app.config['LANGUAGES'])
-
-
-@app.route('/')
-def index():
-    """
-    Hello world
-    """
-    return render_template("4-index.html", message="Welcome to Holberton")
+    locale = request.args.get("locale")
+    if locale and locale in app.config['LANGUAGES']:
+        return locale
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
 if __name__ == "__main__":
-    host = getenv("API_HOST", "0.0.0.0")
-    port = getenv("API_PORT", "5000")
-    app.run(host=host, port=port)
+    app.run()
