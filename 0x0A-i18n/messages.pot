@@ -40,4 +40,3 @@ msgstr ""
 #: templates/index.html:16
 msgid "current_time_is"
 msgstr ""
-
