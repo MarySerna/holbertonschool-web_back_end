@@ -1,0 +1,1 @@
+const getResponseFromAPI = () => new Promise(() => {});
