@@ -4,7 +4,6 @@ export default function divideFunction(numerator, denominator) {
   }
 
   return numerator / denominator;
-}
 ~
 ~
 ~
