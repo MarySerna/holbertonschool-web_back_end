@@ -6,6 +6,6 @@ export default function getStudentsByLocation(array, city, grad) {
         .filter((item) => item.studentId === student.id)
         .map((x) => x.grade)[0];
       const grade = gradeItem || 'N/A';
-        return {...student, grade };
+      return { ...student, grade };
     });
 }
